@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  name           String
+  email          String         @unique
+  password       String 
+  createdAt      DateTime       @default(now()) @map("createdAt")
+  updatedAt      DateTime       @updatedAt @map("updatedAt")
+  deletedAt      DateTime?      @map("deletedAt") // ? หมายถึงเป็น Nullable (สำหรับ Soft Delete)
+  
+  // Relations (ความสัมพันธ์เชื่อมไปยังตารางอื่น)
+  documents      Document[]
+  loginLogs      LoginLog[]
+  userNotebooks  UserNotebook[]
+
+  @@map("Users") // ทำให้ชื่อตารางใน PostgreSQL เป็น "Users" ตามไดอะแกรม
+}
+
+model Document {
+  id            Int            @id @default(autoincrement())
+  userId        Int            @map("user_id")
+  user          User           @relation(fields: [userId], references: [id])
+  fileName      String         @map("file_name")
+  filePath      String         @map("file_path")
+  extractedText String         @map("extracted_text") @db.Text // @db.Text รองรับข้อความยาวๆ จาก PDF
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  deletedAt     DateTime?      @map("deleted_at")
+
+  // Relations
+  quizzes       Quiz[]
+  flashcards    Flashcard[]
+  userNotebooks UserNotebook[]
+
+  @@map("Documents")
+}
+
+// 3. ตารางเก็บข้อสอบ (Quizzes)
+model Quiz {
+  id         Int       @id @default(autoincrement())
+  documentId Int       @map("document_id")
+  document   Document  @relation(fields: [documentId], references: [id])
+  quizData   Json      @map("quiz_data") // แนะนำให้ใช้ Json แทน String เพราะก้อนข้อมูลข้อสอบจาก Python จะจัดการง่ายกว่ามากครับ
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@map("quizzes")
+}
+
+// 4. ตารางเก็บแฟลชการ์ด (Flashcards)
+model Flashcard {
+  id            Int       @id @default(autoincrement())
+  documentId    Int       @map("document_id")
+  document      Document  @relation(fields: [documentId], references: [id])
+  flashcardData Json      @map("flashcard_data") // ใช้ Json เพื่อความสะดวกในการเก็บโครงสร้างการ์ด
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  @@map("flashcards")
+}
+
+// 5. ตารางเก็บประวัติการล็อกอิน
+model LoginLog {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  user          User     @relation(fields: [userId], references: [id])
+  loginTime     DateTime @default(now()) @map("login_time") // แก้จาก string เป็น DateTime เพื่อจับเวลาจริง
+  ipAddress     String   @map("ip_address")
+  userAgent     String   @map("user_agent")
+  status        String
+  failureReason String?  @map("failure_reason") // เผื่อกรณีล็อกอินสำเร็จ ฟีลด์นี้จะเป็น Null ได้
+
+  @@map("LoginLog")
+}
+
+// 6. ตารางสมุดบันทึกของผู้ใช้ (ตารางกลาง/Junction Table)
+model UserNotebook {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
+  user         User      @relation(fields: [userId], references: [id])
+  documentId   Int       @map("document_id")
+  document     Document  @relation(fields: [documentId], references: [id])
+  savedSummary String    @map("saved_summary") @db.Text
+  userAgent    String    @map("user_agent")
+  status       String
+  createdAt    DateTime  @default(now()) @map("createdAt")
+  updatedAt    DateTime  @updatedAt @map("updatedAt")
+  deletedAt    DateTime? @map("deleted_at")
+
+  @@map("UserNotebooks")
+}

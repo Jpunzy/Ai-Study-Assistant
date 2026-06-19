@@ -1,0 +1,21 @@
+# === Python Ignore ===
+**/python-ai/.venv/
+**/python-ai/venv/
+**/python-ai/__pycache__/
+**/python-ai/.pytest_cache/
+
+# === Node.js (NestJS & VueJS) Ignore ===
+**/node_modules/
+**/dist/
+**/.npm/
+
+# === OS & IDE Ignore ===
+.DS_Store
+**/.vscode/
+**/.idea/
+
+# === ⚠️ จุดล็อกความปลอดภัย (ห้ามลบเด็ดขาด) ===
+**/.env
+**/.env.local
+**/.env.development
+**/.env.production
