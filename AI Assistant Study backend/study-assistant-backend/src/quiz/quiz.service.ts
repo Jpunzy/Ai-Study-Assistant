@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { firstValueFrom } from 'rxjs';
 import { Prisma } from '@prisma/client';
@@ -56,7 +61,14 @@ export class QuizService {
         HttpStatus.BAD_GATEWAY,
       );
     }
-
+    const documentIdExists = await this.prisma.document.findUnique({
+      where: { id: documentId },
+    });
+    if (!documentIdExists) {
+      throw new NotFoundException(
+        `ไม่พบเอกสารรหัส ID: ${documentId} ในระบบ ไม่สามารถสร้างข้อสอบได้ครับ`,
+      );
+    }
     const savedQuiz = await this.prisma.quiz.create({
       data: {
         documentId: documentId,
