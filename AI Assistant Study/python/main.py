@@ -30,7 +30,8 @@ async def generate_quiz(request: StudyMaterialRequest):
     # ป้องกันกรณีที่ส่งข้อความว่างเปล่าเข้ามา
     if not request.extracted_text.strip():
         raise HTTPException(status_code=400, detail="Text content cannot be empty")
-        
+    if not request.num_questions or request.num_questions < 1:
+        raise HTTPException(status_code=400, detail="Number of questions must be at least 1")    
     try:
         # 4. เรียกใช้งาน OpenAI API เพื่อเจนข้อสอบ
         response = await client.beta.chat.completions.parse(

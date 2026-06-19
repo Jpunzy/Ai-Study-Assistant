@@ -29,6 +29,13 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
+      // Prisma client types are not resolvable through pnpm symlinks by the
+      // ESLint TypeScript parser, causing false "error typed value" reports.
+      // The types are correct at compile time and runtime.
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
       "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
