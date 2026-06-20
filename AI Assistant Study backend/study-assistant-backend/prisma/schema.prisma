@@ -13,20 +13,21 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  name           String
-  email          String         @unique
-  password       String 
-  createdAt      DateTime       @default(now()) @map("createdAt")
-  updatedAt      DateTime       @updatedAt @map("updatedAt")
-  deletedAt      DateTime?      @map("deletedAt") // ? หมายถึงเป็น Nullable (สำหรับ Soft Delete)
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String 
+  role          String         @default("User") //
+  createdAt     DateTime       @default(now()) @map("createdAt")
+  updatedAt     DateTime       @updatedAt @map("updatedAt")
+  deletedAt     DateTime?      @map("deletedAt") 
   
-  // Relations (ความสัมพันธ์เชื่อมไปยังตารางอื่น)
-  documents      Document[]
-  loginLogs      LoginLog[]
-  userNotebooks  UserNotebook[]
+  // Relations
+  documents     Document[]
+  loginLogs     LoginLog[]
+  userNotebooks UserNotebook[]
 
-  @@map("Users") // ทำให้ชื่อตารางใน PostgreSQL เป็น "Users" ตามไดอะแกรม
+  @@map("Users") 
 }
 
 model Document {
