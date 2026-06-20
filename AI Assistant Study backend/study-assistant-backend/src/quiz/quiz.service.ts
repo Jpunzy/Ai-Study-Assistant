@@ -81,4 +81,17 @@ export class QuizService {
       data: savedQuiz,
     };
   }
+  async getMyQuizzes(userId: number) {
+    return this.prisma.quiz.findMany({
+      where: {
+        document: { userId },
+      },
+      include: {
+        document: {
+          select: { id: true, fileName: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
