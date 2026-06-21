@@ -20,7 +20,7 @@ model User {
   name          String
   email         String         @unique
   password      String 
-  role          String         @default(User)
+  role          Role           @default(User)
   createdAt     DateTime       @default(now()) @map("createdAt")
   updatedAt     DateTime       @updatedAt @map("updatedAt")
   deletedAt     DateTime?      @map("deletedAt") 
@@ -29,6 +29,9 @@ model User {
   documents     Document[]
   loginLogs     LoginLog[]
   userNotebooks UserNotebook[]
+  
+  //เพื่อเชื่อมไปหากล่องเก็บคะแนน
+  quizAttempts  QuizAttempt[]
 
   @@map("Users") 
 }
@@ -61,6 +64,9 @@ model Quiz {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
+  
+  //เพื่อให้รู้ว่าข้อสอบชุดนี้เคยมีคนมาทำไปแล้วกี่ครั้ง
+  attempts   QuizAttempt[]
 
   @@map("quizzes")
 }
@@ -107,4 +113,17 @@ model UserNotebook {
   deletedAt    DateTime? @map("deleted_at")
 
   @@map("UserNotebooks")
+}
+
+model QuizAttempt {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  quizId    Int      @map("quiz_id")
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  score     Int      // คะแนนที่ทำได้ เช่น 8
+  total     Int      // คะแนนเต็ม เช่น 10
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("QuizAttempts")
 }
