@@ -83,6 +83,12 @@ const linksList: EssentialLinkProps[] = [
     caption: "Community Quasar projects",
     icon: "favorite",
     link: "https://awesome.quasar.dev"
+  },
+  {
+    label: "Login",
+    caption: "Test Login",
+    icon: "login",
+    link: "/auth/login",
   }
 ];
 
