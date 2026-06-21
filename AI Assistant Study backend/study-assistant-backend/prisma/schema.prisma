@@ -20,7 +20,7 @@ model User {
   name          String
   email         String         @unique
   password      String 
-  role          String         @default("User") //
+  role          String         @default(User)
   createdAt     DateTime       @default(now()) @map("createdAt")
   updatedAt     DateTime       @updatedAt @map("updatedAt")
   deletedAt     DateTime?      @map("deletedAt") 
