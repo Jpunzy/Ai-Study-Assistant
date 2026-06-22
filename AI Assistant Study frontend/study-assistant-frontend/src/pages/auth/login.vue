@@ -131,8 +131,10 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/authStore';
 import { ref } from 'vue';
 
+const authStore = useAuthStore()
 const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
