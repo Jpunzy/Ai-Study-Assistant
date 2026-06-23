@@ -77,6 +77,7 @@
             :type="showPassword ? 'text' : 'password'"
             class="field"
             bg-color="grey-1"
+            @keyup.enter="onSubmit"
           >
             <template #prepend>
               <q-icon name="lock_outline" color="blue-grey-5" />
@@ -110,6 +111,9 @@
             no-caps
             unelevated
             size="md"
+            :loading="isLoading"
+            :disable="isLoading"
+            @click="onSubmit"
           />
         </div>
 
@@ -133,12 +137,28 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const authStore = useAuthStore()
+const router = useRouter();
+const authStore = useAuthStore();
+
 const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const rememberMe = ref(false);
+const isLoading = ref(false);
+
+async function onSubmit() {
+  if (!email.value || !password.value) return;
+
+  isLoading.value = true;
+  const success = await authStore.login(email.value, password.value);
+  isLoading.value = false;
+
+  if (success) {
+    await router.push('/');
+  }
+}
 </script>
 
 <style scoped lang="scss">

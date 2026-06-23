@@ -2,7 +2,7 @@ import axios from 'axios';
 import { LocalStorage } from 'quasar';
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000',
+  baseURL: '/api',
 });
 
 // แนบ JWT token ทุก request อัตโนมัติ
