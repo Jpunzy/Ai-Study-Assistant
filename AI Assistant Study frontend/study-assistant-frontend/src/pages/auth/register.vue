@@ -1,6 +1,6 @@
 <template>
-  <div class="login-page">
-    <!-- Left Panel: Hero -->
+  <div class="register-page">
+    <!-- Left Panel -->
     <div class="left-panel">
       <div class="left-content">
         <div class="brand-icon">
@@ -8,27 +8,27 @@
         </div>
 
         <h1 class="welcome-heading">
-          ยินดีต้อนรับสู่<br />
-          <span class="highlight">ห้องเรียนอัจฉริยะ</span>
+          เริ่มต้นการเรียนรู้<br />
+          <span class="highlight">ด้วย AI ที่ชาญฉลาด</span>
         </h1>
 
         <p class="welcome-sub">
-          อัปโหลดเอกสารของคุณ แล้วให้ AI สร้างข้อสอบ<br />
-          ที่ตรงประเด็นให้คุณทันที ไม่ต้องเสียเวลาออกข้อสอบเอง
+          สมัครสมาชิกฟรี แล้วเริ่มอัปโหลดเอกสาร<br />
+          ให้ AI ช่วยสร้างข้อสอบและสรุปเนื้อหาให้คุณ
         </p>
 
         <div class="features">
           <div class="feature-item">
-            <q-icon name="upload_file" size="20px" color="white" />
-            <span>อัปโหลด PDF หรือสไลด์ได้ทุกรูปแบบ</span>
+            <q-icon name="how_to_reg" size="20px" color="white" />
+            <span>สมัครฟรี ไม่มีค่าใช้จ่าย</span>
           </div>
           <div class="feature-item">
-            <q-icon name="auto_awesome" size="20px" color="white" />
-            <span>AI เจนข้อสอบแม่นยำในไม่กี่วินาที</span>
+            <q-icon name="bolt" size="20px" color="white" />
+            <span>เริ่มใช้งานได้ทันทีหลังสมัคร</span>
           </div>
           <div class="feature-item">
-            <q-icon name="emoji_events" size="20px" color="white" />
-            <span>ติดตามผลการเรียนรู้ได้ง่าย</span>
+            <q-icon name="security" size="20px" color="white" />
+            <span>ข้อมูลของคุณปลอดภัย 100%</span>
           </div>
         </div>
 
@@ -41,7 +41,6 @@
     <!-- Right Panel: Form -->
     <div class="right-panel">
       <div class="form-box">
-        <!-- Logo -->
         <div class="form-logo">
           <div class="logo-icon">
             <q-icon name="psychology" size="28px" color="white" />
@@ -49,10 +48,27 @@
           <span class="logo-text">AI Assistant Study</span>
         </div>
 
-        <h2 class="form-heading">เข้าสู่ระบบ</h2>
-        <p class="form-sub">กรอกข้อมูลเพื่อเข้าใช้งาน</p>
+        <h2 class="form-heading">สร้างบัญชีใหม่</h2>
+        <p class="form-sub">กรอกข้อมูลเพื่อเริ่มต้นใช้งาน</p>
 
         <div class="form-fields">
+          <!-- Name -->
+          <q-input
+            v-model="name"
+            outlined
+            label="ชื่อ-นามสกุล"
+            placeholder="กรอกชื่อของคุณ"
+            type="text"
+            class="field"
+            bg-color="grey-1"
+            :error="!!nameError"
+            :error-message="nameError"
+          >
+            <template #prepend>
+              <q-icon name="person_outline" color="blue-grey-5" />
+            </template>
+          </q-input>
+
           <!-- Email -->
           <q-input
             v-model="email"
@@ -62,6 +78,8 @@
             type="email"
             class="field"
             bg-color="grey-1"
+            :error="!!emailError"
+            :error-message="emailError"
           >
             <template #prepend>
               <q-icon name="mail_outline" color="blue-grey-5" />
@@ -73,11 +91,12 @@
             v-model="password"
             outlined
             label="รหัสผ่าน"
-            placeholder="กรอกรหัสผ่านของคุณ"
+            placeholder="อย่างน้อย 6 ตัวอักษร"
             :type="showPassword ? 'text' : 'password'"
             class="field"
             bg-color="grey-1"
-            @keyup.enter="onSubmit"
+            :error="!!passwordError"
+            :error-message="passwordError"
           >
             <template #prepend>
               <q-icon name="lock_outline" color="blue-grey-5" />
@@ -92,21 +111,35 @@
             </template>
           </q-input>
 
-          <!-- Remember + Forgot -->
-          <div class="row items-center justify-between q-mt-xs">
-            <q-checkbox
-              v-model="rememberMe"
-              label="จดจำฉัน"
-              color="indigo-7"
-              dense
-              class="text-caption text-grey-7"
-            />
-            <a href="#" class="forgot-link">ลืมรหัสผ่าน?</a>
-          </div>
+          <!-- Confirm Password -->
+          <q-input
+            v-model="confirmPassword"
+            outlined
+            label="ยืนยันรหัสผ่าน"
+            placeholder="กรอกรหัสผ่านอีกครั้ง"
+            :type="showConfirm ? 'text' : 'password'"
+            class="field"
+            bg-color="grey-1"
+            :error="!!confirmError"
+            :error-message="confirmError"
+            @keyup.enter="onSubmit"
+          >
+            <template #prepend>
+              <q-icon name="lock_outline" color="blue-grey-5" />
+            </template>
+            <template #append>
+              <q-icon
+                :name="showConfirm ? 'visibility' : 'visibility_off'"
+                color="blue-grey-5"
+                class="cursor-pointer"
+                @click="showConfirm = !showConfirm"
+              />
+            </template>
+          </q-input>
 
           <!-- Submit -->
           <q-btn
-            label="เข้าสู่ระบบ"
+            label="สมัครสมาชิก"
             class="submit-btn"
             no-caps
             unelevated
@@ -117,17 +150,15 @@
           />
         </div>
 
-        <!-- Divider -->
         <div class="divider-row">
           <div class="divider-line" />
           <span class="divider-text">หรือ</span>
           <div class="divider-line" />
         </div>
 
-        <!-- Register link -->
-        <p class="register-text">
-          ยังไม่มีบัญชีใช่ไหม?
-          <router-link to="/auth/register" class="register-link">สมัครสมาชิก</router-link>
+        <p class="login-text">
+          มีบัญชีอยู่แล้ว?
+          <router-link to="/auth/login" class="login-link">เข้าสู่ระบบ</router-link>
         </p>
       </div>
     </div>
@@ -136,23 +167,62 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
+const name = ref('');
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
 const showPassword = ref(false);
-const rememberMe = ref(false);
+const showConfirm = ref(false);
 const isLoading = ref(false);
+const submitted = ref(false);
+
+const nameError = computed(() => {
+  if (!submitted.value) return '';
+  if (!name.value.trim()) return 'กรุณากรอกชื่อ';
+  return '';
+});
+
+const emailError = computed(() => {
+  if (!submitted.value) return '';
+  if (!email.value) return 'กรุณากรอกอีเมล';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) return 'รูปแบบอีเมลไม่ถูกต้อง';
+  return '';
+});
+
+const passwordError = computed(() => {
+  if (!submitted.value) return '';
+  if (!password.value) return 'กรุณากรอกรหัสผ่าน';
+  if (password.value.length < 6) return 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร';
+  return '';
+});
+
+const confirmError = computed(() => {
+  if (!submitted.value) return '';
+  if (!confirmPassword.value) return 'กรุณายืนยันรหัสผ่าน';
+  if (confirmPassword.value !== password.value) return 'รหัสผ่านไม่ตรงกัน';
+  return '';
+});
+
+const isValid = computed(
+  () =>
+    !nameError.value &&
+    !emailError.value &&
+    !passwordError.value &&
+    !confirmError.value,
+);
 
 async function onSubmit() {
-  if (!email.value || !password.value) return;
+  submitted.value = true;
+  if (!isValid.value) return;
 
   isLoading.value = true;
-  const success = await authStore.login(email.value, password.value);
+  const success = await authStore.register(name.value.trim(), email.value, password.value);
   isLoading.value = false;
 
   if (success) {
@@ -162,13 +232,11 @@ async function onSubmit() {
 </script>
 
 <style scoped lang="scss">
-/* ── Layout ── */
-.login-page {
+.register-page {
   display: flex;
   min-height: 100vh;
 }
 
-/* ── Left Panel ── */
 .left-panel {
   flex: 0 0 60%;
   background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #4c1d95 100%);
@@ -244,7 +312,6 @@ async function onSubmit() {
   backdrop-filter: blur(4px);
 }
 
-/* Decorative circles */
 .deco-circle {
   position: absolute;
   border-radius: 50%;
@@ -276,7 +343,6 @@ async function onSubmit() {
   right: 40px;
 }
 
-/* ── Right Panel ── */
 .right-panel {
   flex: 1;
   background: #fff;
@@ -295,7 +361,6 @@ async function onSubmit() {
   max-width: 400px;
 }
 
-/* Logo */
 .form-logo {
   display: flex;
   align-items: center;
@@ -320,7 +385,6 @@ async function onSubmit() {
   letter-spacing: 0.3px;
 }
 
-/* Headings */
 .form-heading {
   font-size: 1.75rem;
   font-weight: 700;
@@ -334,7 +398,6 @@ async function onSubmit() {
   margin: 0 0 28px;
 }
 
-/* Fields */
 .form-fields {
   display: flex;
   flex-direction: column;
@@ -345,21 +408,6 @@ async function onSubmit() {
   border-radius: 10px;
 }
 
-/* Forgot link */
-.forgot-link {
-  color: #4f46e5;
-  font-size: 0.82rem;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #3730a3;
-    text-decoration: underline;
-  }
-}
-
-/* Submit button */
 .submit-btn {
   width: 100%;
   height: 48px;
@@ -381,7 +429,6 @@ async function onSubmit() {
   }
 }
 
-/* Divider */
 .divider-row {
   display: flex;
   align-items: center;
@@ -401,15 +448,14 @@ async function onSubmit() {
   white-space: nowrap;
 }
 
-/* Register */
-.register-text {
+.login-text {
   text-align: center;
   color: #64748b;
   font-size: 0.875rem;
   margin: 0;
 }
 
-.register-link {
+.login-link {
   color: #4f46e5;
   font-weight: 600;
   text-decoration: none;

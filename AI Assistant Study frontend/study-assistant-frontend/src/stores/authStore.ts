@@ -75,9 +75,48 @@ export const useAuthStore = defineStore("authStore", () => {
     await router.replace("/auth/login");
   }
 
+  async function register(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<boolean> {
+    try {
+      Loading.show();
+
+      await api.post("/auth/register", { name, email, password });
+
+      // auto-login หลัง register สำเร็จ
+      return await login(email, password);
+    } catch (err: unknown) {
+      const message =
+        isAxiosConflict(err)
+          ? "อีเมลนี้ถูกใช้งานแล้ว"
+          : "สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่";
+
+      Notify.create({
+        color: "negative",
+        icon: "error",
+        message,
+        position: "top",
+      });
+      return false;
+    } finally {
+      Loading.hide();
+    }
+  }
+
+  function isAxiosConflict(err: unknown): boolean {
+    return (
+      typeof err === "object" &&
+      err !== null &&
+      "response" in err &&
+      (err as { response: { status: number } }).response?.status === 409
+    );
+  }
+
   loadUserFromStorage();
 
-  return { isLogin, user, token, role, login, logout };
+  return { isLogin, user, token, role, login, logout, register };
 });
 
 if (import.meta.hot) {
