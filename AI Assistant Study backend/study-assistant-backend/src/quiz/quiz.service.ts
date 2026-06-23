@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { HttpService } from '@nestjs/axios';
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -30,23 +31,38 @@ export class QuizService {
   ) {}
 
   async generateAndSaveQuiz(
-    extractedText: string,
-    numQuestions: number,
     documentId: number,
+    userId: number,
+    numQuestions: number = 3,
   ) {
+    // 1. ดึงเอกสารและตรวจสอบสิทธิ์ความเป็นเจ้าของ
+    const document = await this.prisma.document.findUnique({
+      where: { id: documentId },
+    });
+
+    if (!document) {
+      throw new NotFoundException(`ไม่พบเอกสาร ID: ${documentId}`);
+    }
+
+    if (document.userId !== userId) {
+      throw new ForbiddenException('คุณไม่มีสิทธิ์สร้างข้อสอบจากเอกสารนี้');
+    }
+
+    // 2. เรียก Python AI Service
     const baseUrl = process.env.AI_SERVICE_URL ?? 'http://localhost:8000';
-    const fastapiUrl = `${baseUrl}/api/ai/generate-quiz`;
     const payload = {
-      extracted_text: extractedText,
+      extracted_text: document.extractedText,
       num_questions: numQuestions,
     };
 
     let aiResponseData: ApiQuizResponse;
     try {
       const response = await firstValueFrom(
-        this.httpService.post<ApiQuizResponse>(fastapiUrl, payload, {
-          timeout: AI_SERVICE_TIMEOUT_MS,
-        }),
+        this.httpService.post<ApiQuizResponse>(
+          `${baseUrl}/api/ai/generate-quiz`,
+          payload,
+          { timeout: AI_SERVICE_TIMEOUT_MS },
+        ),
       );
       aiResponseData = response.data;
     } catch (error) {
@@ -61,35 +77,35 @@ export class QuizService {
         HttpStatus.BAD_GATEWAY,
       );
     }
-    const documentIdExists = await this.prisma.document.findUnique({
-      where: { id: documentId },
-    });
-    if (!documentIdExists) {
-      throw new NotFoundException(
-        `ไม่พบเอกสารรหัส ID: ${documentId} ในระบบ ไม่สามารถสร้างข้อสอบได้ครับ`,
-      );
-    }
+
+    // 3. บันทึก Quiz ลง Database
     const savedQuiz = await this.prisma.quiz.create({
       data: {
-        documentId: documentId,
+        documentId,
         quizData: aiResponseData.quizzes as unknown as Prisma.InputJsonValue,
+      },
+      include: {
+        document: { select: { id: true, fileName: true } },
       },
     });
 
     return {
-      message: 'Quiz generated and saved successfully',
-      data: savedQuiz,
+      message: 'สร้างข้อสอบสำเร็จ',
+      quizId: savedQuiz.id,
+      documentId: savedQuiz.documentId,
+      fileName: savedQuiz.document.fileName,
+      questionCount: aiResponseData.quizzes.length,
+      quizData: savedQuiz.quizData,
     };
   }
+
   async getMyQuizzes(userId: number) {
     return this.prisma.quiz.findMany({
       where: {
         document: { userId },
       },
       include: {
-        document: {
-          select: { id: true, fileName: true },
-        },
+        document: { select: { id: true, fileName: true } },
       },
       orderBy: { createdAt: 'desc' },
     });

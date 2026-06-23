@@ -24,7 +24,7 @@ class StudyMaterialRequest(BaseModel):
     extracted_text: str
     num_questions: int = 3  # จำนวนข้อสอบที่ต้องการ (ดีฟอลต์เป็น 3 ข้อ)
 
-# 3. สร้าง Endpoint (ทางเข้าออกข้อมูล) แบบ POST เพื่อรอรับงาน
+# สร้าง Endpoint (ทางเข้าออกข้อมูล) แบบ POST เพื่อรอรับงาน
 @app.post("/api/ai/generate-quiz")
 async def generate_quiz(request: StudyMaterialRequest):
     # ป้องกันกรณีที่ส่งข้อความว่างเปล่าเข้ามา
@@ -34,20 +34,36 @@ async def generate_quiz(request: StudyMaterialRequest):
         raise HTTPException(status_code=400, detail="Number of questions must be at least 1")    
     try:
         # 4. เรียกใช้งาน OpenAI API เพื่อเจนข้อสอบ
+        system_prompt = f"""คุณคือผู้เชี่ยวชาญด้านการออกข้อสอบและการวัดผลทางการศึกษา \
+มีความเชี่ยวชาญในการสร้างข้อสอบที่วัดความเข้าใจเชิงลึก ไม่ใช่การท่องจำ
+
+ภารกิจ: สร้างข้อสอบปรนัย 4 ตัวเลือก จำนวน {request.num_questions} ข้อ จากเนื้อหาที่ได้รับ
+
+หลักเกณฑ์การออกข้อสอบ:
+1. คำถามต้องมาจากเนื้อหาที่ให้มาเท่านั้น ห้ามใช้ความรู้ภายนอก
+2. ถามในเชิงวิเคราะห์ ประยุกต์ใช้ หรือคำนวณ หลีกเลี่ยงการถามตรงๆ จากข้อความ
+3. ตัวเลือกที่ผิดทุกข้อต้องสมเหตุสมผล ผู้ที่ยังไม่เข้าใจดีพออาจเลือกได้
+4. มีคำตอบที่ถูกต้องเพียงข้อเดียวอย่างชัดเจน
+
+หลักเกณฑ์การเขียน explanation:
+- อธิบาย step-by-step ว่าทำไมคำตอบนั้นถึงถูกต้อง
+- ระบุเหตุผลว่าทำไมตัวเลือกอื่นถึงผิด
+- ใช้ภาษาเรียบง่าย เข้าใจง่ายสำหรับผู้เรียน
+
+ใช้ภาษาไทยทั้งหมดสำหรับคำถาม ตัวเลือก และคำอธิบาย"""
+
+        user_prompt = f"""เนื้อหาบทเรียน:
+\"\"\"
+{request.extracted_text}
+\"\"\"
+
+ออกข้อสอบจำนวน {request.num_questions} ข้อ จากเนื้อหาข้างต้น"""
+
         response = await client.beta.chat.completions.parse(
             model="gpt-4o-mini",
             messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "คุณคือศาสตราจารย์คณะวิศวกรรมคอมพิวเตอร์ "
-                        f"จงนำเนื้อหาที่ได้รับไปออกข้อสอบคำนวณหรือวิเคราะห์เชิงลึกแบบปรนัย 4 ตัวเลือก จำนวน {request.num_questions} ข้อ"
-                    )
-                },
-                {
-                    "role": "user",
-                    "content": f"เนื้อหาบทเรียน: {request.extracted_text}"
-                }
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": user_prompt},
             ],
             response_format=QuizResponseSchema,
             temperature=0.3

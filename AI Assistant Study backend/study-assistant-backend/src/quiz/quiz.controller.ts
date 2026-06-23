@@ -1,37 +1,33 @@
-import {
-  Controller,
-  Post,
-  Body,
-  ParseIntPipe,
-  UseGuards,
-  Get,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { QuizService } from './quiz.service';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GenerateQuizDto } from './dto/generate-quiz.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   CurrentUser,
   type CurrentUserPayload,
-} from 'src/auth/decorators/current-user.decorator';
+} from '../auth/decorators/current-user.decorator';
 
-@Controller('api/quizzes')
+@ApiTags('Quizzes')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@Controller('quizzes')
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
   @Post('generate')
-  async createQuiz(
-    @Body('document_id', ParseIntPipe) documentId: number, // ใช้ ParseIntPipe เพื่อแปลงเป็นตัวเลขชัวร์ๆ
-    @Body('extracted_text') extractedText: string,
-    @Body('num_questions') numQuestions: number,
+  generateQuiz(
+    @Body() dto: GenerateQuizDto,
+    @CurrentUser() user: CurrentUserPayload,
   ) {
     return this.quizService.generateAndSaveQuiz(
-      extractedText,
-      numQuestions || 3, // ถ้าไม่ส่งมา ให้ดีฟอลต์เป็น 3 ข้อ
-      documentId,
+      dto.documentId,
+      user.id,
+      dto.numQuestions ?? 3,
     );
   }
 
   @Get('my-quizzes')
-  @UseGuards(JwtAuthGuard)
   getMyQuizzes(@CurrentUser() user: CurrentUserPayload) {
     return this.quizService.getMyQuizzes(user.id);
   }
