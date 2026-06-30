@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 export interface EssentialLinkProps {
   label: string;
@@ -33,11 +33,11 @@ export interface EssentialLinkProps {
 }
 
 const props = withDefaults(defineProps<EssentialLinkProps>(), {
-  caption: '',
-  link: '#',
-  icon: '',
+  caption: "",
+  link: "#",
+  icon: ""
 });
 
 // ลิงก์ที่ขึ้นต้นด้วย / คือ internal route
-const isInternal = computed(() => props.link?.startsWith('/'));
+const isInternal = computed(() => props.link?.startsWith("/"));
 </script>

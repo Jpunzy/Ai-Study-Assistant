@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
 
-pnpm lint
+pnpm -r --if-present lint
+pnpm -r --if-present typecheck

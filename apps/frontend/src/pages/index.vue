@@ -88,7 +88,7 @@ const linksList: EssentialLinkProps[] = [
     label: "Login",
     caption: "Test Login",
     icon: "login",
-    link: "/auth/login",
+    link: "/auth/login"
   }
 ];
 

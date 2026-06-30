@@ -158,7 +158,9 @@
 
         <p class="login-text">
           มีบัญชีอยู่แล้ว?
-          <router-link to="/auth/login" class="login-link">เข้าสู่ระบบ</router-link>
+          <router-link to="/auth/login" class="login-link"
+            >เข้าสู่ระบบ</router-link
+          >
         </p>
       </div>
     </div>
@@ -166,47 +168,49 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/authStore';
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from "@/stores/authStore";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const authStore = useAuthStore();
 
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
 const showPassword = ref(false);
 const showConfirm = ref(false);
 const isLoading = ref(false);
 const submitted = ref(false);
 
 const nameError = computed(() => {
-  if (!submitted.value) return '';
-  if (!name.value.trim()) return 'กรุณากรอกชื่อ';
-  return '';
+  if (!submitted.value) return "";
+  if (!name.value.trim()) return "กรุณากรอกชื่อ";
+  return "";
 });
 
 const emailError = computed(() => {
-  if (!submitted.value) return '';
-  if (!email.value) return 'กรุณากรอกอีเมล';
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) return 'รูปแบบอีเมลไม่ถูกต้อง';
-  return '';
+  if (!submitted.value) return "";
+  if (!email.value) return "กรุณากรอกอีเมล";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value))
+    return "รูปแบบอีเมลไม่ถูกต้อง";
+  return "";
 });
 
 const passwordError = computed(() => {
-  if (!submitted.value) return '';
-  if (!password.value) return 'กรุณากรอกรหัสผ่าน';
-  if (password.value.length < 6) return 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร';
-  return '';
+  if (!submitted.value) return "";
+  if (!password.value) return "กรุณากรอกรหัสผ่าน";
+  if (password.value.length < 6)
+    return "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร";
+  return "";
 });
 
 const confirmError = computed(() => {
-  if (!submitted.value) return '';
-  if (!confirmPassword.value) return 'กรุณายืนยันรหัสผ่าน';
-  if (confirmPassword.value !== password.value) return 'รหัสผ่านไม่ตรงกัน';
-  return '';
+  if (!submitted.value) return "";
+  if (!confirmPassword.value) return "กรุณายืนยันรหัสผ่าน";
+  if (confirmPassword.value !== password.value) return "รหัสผ่านไม่ตรงกัน";
+  return "";
 });
 
 const isValid = computed(
@@ -214,7 +218,7 @@ const isValid = computed(
     !nameError.value &&
     !emailError.value &&
     !passwordError.value &&
-    !confirmError.value,
+    !confirmError.value
 );
 
 async function onSubmit() {
@@ -222,11 +226,15 @@ async function onSubmit() {
   if (!isValid.value) return;
 
   isLoading.value = true;
-  const success = await authStore.register(name.value.trim(), email.value, password.value);
+  const success = await authStore.register(
+    name.value.trim(),
+    email.value,
+    password.value
+  );
   isLoading.value = false;
 
   if (success) {
-    await router.push('/');
+    await router.push("/");
   }
 }
 </script>
@@ -417,7 +425,9 @@ async function onSubmit() {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  transition: opacity 0.2s, transform 0.15s;
+  transition:
+    opacity 0.2s,
+    transform 0.15s;
 
   &:hover {
     opacity: 0.9;

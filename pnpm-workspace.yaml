@@ -1,3 +1,2 @@
 packages:
-  - "AI Assistant Study backend"
-  - "AI Assistant Study frontend"
+  - "apps/*"

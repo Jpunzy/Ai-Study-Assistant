@@ -99,7 +99,7 @@ export class QuizService {
     };
   }
 
-  async getMyQuizzes(userId: number) {
+  getMyQuizzes(userId: number) {
     return this.prisma.quiz.findMany({
       where: {
         document: { userId },

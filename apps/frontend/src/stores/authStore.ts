@@ -41,13 +41,13 @@ export const useAuthStore = defineStore("authStore", () => {
       // 1. รับ access_token จาก backend
       const res = await api.post<{ access_token: string }>("/auth/login", {
         email,
-        password,
+        password
       });
       token.value = res.data.access_token;
 
       // 2. ดึงข้อมูล user ด้วย token ที่ได้มา
       const profileRes = await api.get<User>("/users/me", {
-        headers: { Authorization: `Bearer ${token.value}` },
+        headers: { Authorization: `Bearer ${token.value}` }
       });
       user.value = profileRes.data;
 
@@ -60,7 +60,7 @@ export const useAuthStore = defineStore("authStore", () => {
         color: "negative",
         icon: "error",
         message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
-        position: "top",
+        position: "top"
       });
       return false;
     } finally {
@@ -78,7 +78,7 @@ export const useAuthStore = defineStore("authStore", () => {
   async function register(
     name: string,
     email: string,
-    password: string,
+    password: string
   ): Promise<boolean> {
     try {
       Loading.show();
@@ -88,16 +88,15 @@ export const useAuthStore = defineStore("authStore", () => {
       // auto-login หลัง register สำเร็จ
       return await login(email, password);
     } catch (err: unknown) {
-      const message =
-        isAxiosConflict(err)
-          ? "อีเมลนี้ถูกใช้งานแล้ว"
-          : "สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่";
+      const message = isAxiosConflict(err)
+        ? "อีเมลนี้ถูกใช้งานแล้ว"
+        : "สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่";
 
       Notify.create({
         color: "negative",
         icon: "error",
         message,
-        position: "top",
+        position: "top"
       });
       return false;
     } finally {

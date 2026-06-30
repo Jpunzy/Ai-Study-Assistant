@@ -127,7 +127,9 @@
         <!-- Register link -->
         <p class="register-text">
           ยังไม่มีบัญชีใช่ไหม?
-          <router-link to="/auth/register" class="register-link">สมัครสมาชิก</router-link>
+          <router-link to="/auth/register" class="register-link"
+            >สมัครสมาชิก</router-link
+          >
         </p>
       </div>
     </div>
@@ -135,15 +137,15 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/authStore';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from "@/stores/authStore";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const authStore = useAuthStore();
 
-const email = ref('');
-const password = ref('');
+const email = ref("");
+const password = ref("");
 const showPassword = ref(false);
 const rememberMe = ref(false);
 const isLoading = ref(false);
@@ -156,7 +158,7 @@ async function onSubmit() {
   isLoading.value = false;
 
   if (success) {
-    await router.push('/');
+    await router.push("/");
   }
 }
 </script>
@@ -369,7 +371,9 @@ async function onSubmit() {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  transition: opacity 0.2s, transform 0.15s;
+  transition:
+    opacity 0.2s,
+    transform 0.15s;
 
   &:hover {
     opacity: 0.9;
