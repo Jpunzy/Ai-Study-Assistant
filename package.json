@@ -1,0 +1,9 @@
+{
+	"devDependencies": {
+		"husky": "^9.1.7"
+	},
+	"scripts": {
+		"prepare": "husky",
+		"lint": "pnpm --filter study-assistant-backend lint && pnpm --filter study-assistant-frontend lint"
+	}
+}
