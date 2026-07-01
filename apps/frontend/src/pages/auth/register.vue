@@ -234,7 +234,7 @@ async function onSubmit() {
   isLoading.value = false;
 
   if (success) {
-    await router.push("/");
+    await router.push("/auth/login");
   }
 }
 </script>
