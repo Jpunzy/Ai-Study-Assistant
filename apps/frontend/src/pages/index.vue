@@ -1,18 +1,25 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated style="background: #6777EF;">
+    <q-header elevated style="background: #6777ef">
       <!-- menu -->
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
 
         <!-- title -->
         <q-toolbar-title> AI Assistant Study </q-toolbar-title>
 
-
         <!-- icon -->
         <q-btn flat round dense icon="search" />
-        <q-btn flat round dense icon="notifications" @click="notify = true"><q-badge color="red" floating transparent> 4
-          </q-badge></q-btn>
+        <q-btn flat round dense icon="notifications" @click="notify = true"
+          ><q-badge color="red" floating transparent> 4 </q-badge></q-btn
+        >
         <!-- separator -->
         <q-separator vertical inset class="q-mx-md" color="white" />
 
@@ -30,7 +37,6 @@
 
           <q-menu anchor="bottom right" self="top right">
             <q-list style="min-width: 220px">
-
               <!-- ข้อมูลผู้ใช้ -->
               <q-item>
                 <q-item-section avatar>
@@ -57,9 +63,7 @@
                   <q-icon name="person" />
                 </q-item-section>
 
-                <q-item-section>
-                  Profile
-                </q-item-section>
+                <q-item-section> Profile </q-item-section>
               </q-item>
 
               <!-- Logout -->
@@ -68,15 +72,11 @@
                   <q-icon name="logout" color="negative" />
                 </q-item-section>
 
-                <q-item-section class="text-negative">
-                  Logout
-                </q-item-section>
+                <q-item-section class="text-negative"> Logout </q-item-section>
               </q-item>
-
             </q-list>
           </q-menu>
         </q-item>
-
 
         <!-- notification dialog  -->
         <q-dialog v-model="notify">
@@ -86,8 +86,9 @@
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              This is a notification message. In the future, you can implement a notification system to display
-              real-time updates or alerts to the user.
+              This is a notification message. In the future, you can implement a
+              notification system to display real-time updates or alerts to the
+              user.
             </q-card-section>
 
             <q-card-actions align="right">
@@ -102,7 +103,11 @@
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.label" v-bind="link" />
+        <EssentialLink
+          v-for="link in linksList"
+          :key="link.label"
+          v-bind="link"
+        />
       </q-list>
     </q-drawer>
 
@@ -164,12 +169,6 @@ const linksList: EssentialLinkProps[] = [
     icon: "favorite",
     link: "https://awesome.quasar.dev"
   },
-  {
-    label: "Login",
-    caption: "Test Login",
-    icon: "login",
-    link: "/auth/login"
-  }
 ];
 
 const leftDrawerOpen = ref(false);

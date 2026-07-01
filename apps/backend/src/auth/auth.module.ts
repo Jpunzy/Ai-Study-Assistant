@@ -28,4 +28,3 @@ import { PrismaService } from 'src/prisma/prisma.service';
   providers: [AuthService, JwtStrategy, PrismaService],
 })
 export class AuthModule {}
-

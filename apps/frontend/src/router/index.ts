@@ -4,8 +4,9 @@ import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
-  createWebHistory
+  createWebHistory,
 } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 
 /*
  * If not building with SSR mode, you can
@@ -30,7 +31,26 @@ export default defineRouter((/* { store, ssrContext } */) => {
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
-    history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE)
+    history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE),
+  });
+
+  // Navigation guard to check authentication
+  Router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+    const publicRoutes = ["/auth/login", "/auth/register"];
+
+    // Load user from storage on app initialization
+    authStore.loadUserFromStorage();
+
+    const isAuthenticated = authStore.isLogin;
+    const isPublicRoute = publicRoutes.includes(to.path);
+
+    // If trying to access protected route without authentication
+    if (!isAuthenticated && !isPublicRoute) {
+      next("/auth/login");
+    } else {
+      next();
+    }
   });
 
   // enable HMR for it

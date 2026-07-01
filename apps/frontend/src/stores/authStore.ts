@@ -11,7 +11,7 @@ export const useAuthStore = defineStore("authStore", () => {
   const user = ref<User | null>(null);
   const token = ref<string | null>(null);
 
-  const isLogin = computed(() => user.value !== null);
+  const isLogin = computed(() => token.value !== null);
   const role = computed(() => user.value?.role ?? null);
 
   function saveUserToStorage() {
@@ -41,13 +41,13 @@ export const useAuthStore = defineStore("authStore", () => {
       // 1. รับ access_token จาก backend
       const res = await api.post<{ access_token: string }>("/auth/login", {
         email,
-        password
+        password,
       });
       token.value = res.data.access_token;
 
       // 2. ดึงข้อมูล user ด้วย token ที่ได้มา
       const profileRes = await api.get<User>("/users/me", {
-        headers: { Authorization: `Bearer ${token.value}` }
+        headers: { Authorization: `Bearer ${token.value}` },
       });
       user.value = profileRes.data;
 
@@ -60,7 +60,7 @@ export const useAuthStore = defineStore("authStore", () => {
         color: "negative",
         icon: "error",
         message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
-        position: "top"
+        position: "top",
       });
       return false;
     } finally {
@@ -78,7 +78,7 @@ export const useAuthStore = defineStore("authStore", () => {
   async function register(
     name: string,
     email: string,
-    password: string
+    password: string,
   ): Promise<boolean> {
     try {
       Loading.show();
@@ -96,7 +96,7 @@ export const useAuthStore = defineStore("authStore", () => {
         color: "negative",
         icon: "error",
         message,
-        position: "top"
+        position: "top",
       });
       return false;
     } finally {
@@ -115,7 +115,16 @@ export const useAuthStore = defineStore("authStore", () => {
 
   loadUserFromStorage();
 
-  return { isLogin, user, token, role, login, logout, register };
+  return {
+    isLogin,
+    user,
+    token,
+    role,
+    login,
+    logout,
+    register,
+    loadUserFromStorage,
+  };
 });
 
 if (import.meta.hot) {
