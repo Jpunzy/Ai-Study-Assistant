@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DocumentsModule } from './documents/documents.module';
+import { LoginlogModule } from './loginlog/loginlog.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { DocumentsModule } from './documents/documents.module';
     AuthModule,
     UsersModule,
     DocumentsModule,
+    LoginlogModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

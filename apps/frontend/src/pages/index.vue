@@ -168,7 +168,7 @@ const linksList: EssentialLinkProps[] = [
     caption: "Community Quasar projects",
     icon: "favorite",
     link: "https://awesome.quasar.dev"
-  },
+  }
 ];
 
 const leftDrawerOpen = ref(false);
